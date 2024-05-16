@@ -1,7 +1,7 @@
-import clientPromise from '@/lib/mongodb'
-import { MongoDBAdapter } from '@auth/mongodb-adapter'
-import NextAuth from 'next-auth'
-import GoogleProvider from 'next-auth/providers/google'
+import { MongoDBAdapter } from '@auth/mongodb-adapter';
+import NextAuth from 'next-auth';
+import GoogleProvider from 'next-auth/providers/google';
+import clientPromise from '@/lib/mongodb';
 
 export default NextAuth({
   providers: [
@@ -10,5 +10,9 @@ export default NextAuth({
       clientSecret: process.env.GOOGLE_SECRET
     }),
   ],
-  adapter:MongoDBAdapter(clientPromise),
-})
+  adapter: MongoDBAdapter({ client: await clientPromise }),
+  session: async ({ session, token, user }) => {
+    console.log(session, token, user);
+    return session;
+  }
+});
